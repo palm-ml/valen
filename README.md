@@ -16,6 +16,8 @@ python -u main.py --gpu 0 --bs 256 --partial_type random --dt benchmark --ds fmn
 #### cifar10
 python -u main.py --gpu 0 --bs 256 --partial_type random --dt benchmark --ds cifar10 --lr 5e-2 --wd 1e-3 --gamma 10 --beta 0.1
 
+cifar10用的backbone不一样，导致参数设置不同。
+
 ### benchmark-instance
 #### mnist
 python -u main.py --gpu 0 --bs 256 --partial_type feature --dt benchmark --ds mnist --warm_up 10 --gamma 5 --beta 0.1
@@ -25,7 +27,6 @@ python -u main.py --gpu 0 --bs 256 --partial_type feature --dt benchmark --ds km
 python -u main.py --gpu 0 --bs 256 --partial_type feature --dt benchmark --ds fmnist --warm_up 10 --gamma 5 --beta 0.1
 #### cifar10
 python -u main.py --gpu 0 --bs 256 --partial_type feature --dt benchmark --ds cifar10 --lr 5e-2 --wd 1e-3 --warm_up 10 --gamma 10 --beta 0.1 --correct 0.2
-cifar10用的backbone不一样，导致参数设置不同。
 
 ### realword
 #### lost
@@ -38,7 +39,9 @@ python -u main.py --gpu 0 --bs 100 --dt realworld --ds birdac --gamma 20 --beta 
 python -u main.py --gpu 0 --dt realworld --ds spd --gamma 20 --beta 0.01 --correct 0.2
 #### LYN
 python -u main.py --gpu 0 --dt realworld --ds LYN --gamma 20 --beta 0.01 --correct 0.2
+
 realworld前三个数据量与后两个数据量差异过大，所以采用不同超参。
+
 ## Data
 ---
 
