@@ -1,0 +1,21 @@
+blessings==1.7
+certifi==2020.12.5
+dataclasses==0.8
+gpustat==0.6.0
+h5py @ file:///tmp/build/80754af9/h5py_1593454121459/work
+joblib @ file:///tmp/build/80754af9/joblib_1613502643832/work
+mkl-fft==1.3.0
+mkl-random==1.1.1
+mkl-service==2.3.0
+numpy @ file:///tmp/build/80754af9/numpy_and_numpy_base_1603487797006/work
+nvidia-ml-py3==7.352.0
+Pillow==8.2.0
+psutil==5.8.0
+scikit-learn @ file:///tmp/build/80754af9/scikit-learn_1621365798935/work
+scipy @ file:///tmp/build/80754af9/scipy_1597686625380/work
+six @ file:///home/linux1/recipes/ci/six_1610970791821/work
+threadpoolctl @ file:///tmp/tmp9twdgx9k/threadpoolctl-2.1.0-py3-none-any.whl
+torch==1.8.1+cu111
+torchaudio==0.8.1
+torchvision==0.9.1+cu111
+typing-extensions==3.10.0.0

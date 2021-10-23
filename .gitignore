@@ -1,0 +1,8 @@
+# 忽略指定文件夹
+weights/
+experiment/
+nohup/
+data/
+results/
+middle/
+
