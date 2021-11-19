@@ -40,6 +40,6 @@ python -u main.py --gpu 0 --dt realworld --ds LYN --gamma 20 --beta 0.01 --corre
 
 ## Data
 ---
-
+The data is available at https://drive.google.com/drive/folders/1J_68EqOrLN6tA56RcyTgcr1komJB31Y1?usp=sharing
 
 
