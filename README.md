@@ -1,5 +1,5 @@
-# Instance-Dependent Partial Label Learning
-
+# Paper
+Instance-Dependent Partial Label Learning (NIPS'21)
 ## Installation
 ---
 pip install -r requirements.txt 
