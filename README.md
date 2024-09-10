@@ -1,11 +1,30 @@
 # Paper
-Instance-Dependent Partial Label Learning (NIPS'21)
+VALEN is the implementation of our NIPS'21 paper Instance-Dependent Partial Label Learning.
+
+MILEN is the implementation of the extension of NIPS'21 paper Instance-Dependent Partial Label Learning, which has been accepted by TPAMI.
+
 ## Installation
 ---
 pip install -r requirements.txt 
 
-## Run the Demo
+## Run MILEN
 ---
+cd milen
+
+### benchmark-instance
+#### kmnist
+python -u main.py -gpu 0 -ds kmnist
+#### fmnist
+python -u main.py -gpu 0 -ds fmnist
+#### cifar10
+python -u main.py -gpu 0 -ds cifar10
+#### cifar100
+python -u main.py -gpu 0 -ds cifar100
+
+## Run VALEN
+---
+cd valen
+
 ### benchmark-random
 #### mnist
 python -u main.py --gpu 0 --bs 256 --partial_type random --dt benchmark --ds mnist --gamma 10 --beta 0.1
