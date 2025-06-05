@@ -21,11 +21,8 @@ from utils.utils_log import Monitor, TimeUse
 from models.linear import linear
 from models.mlp import mlp, mlp_phi
 from datasets.realworld.realworld_by_liubiao import RealwordDataLoader, RealWorldData, My_Subset
-
-# settings
-# run device gpu:x or cpu
-args = extract_args()
-device = torch.device("cuda:"+str(args.gpu) if torch.cuda.is_available() else 'cpu')
+import optuna
+from optuna.samplers import TPESampler
 
 def set_seed(seed):
     torch.manual_seed(seed) # 为CPU设置随机种子
@@ -36,6 +33,10 @@ def set_seed(seed):
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = True
 
+# settings
+# run device gpu:x or cpu
+args = extract_args()
+device = torch.device("cuda:"+str(args.gpu) if torch.cuda.is_available() else 'cpu')
 set_seed(args.seed)
 
 
@@ -54,7 +55,7 @@ def warm_up_realworld(config, model, train_loader, test_X, test_Y):
             L_ce.backward()
             opt.step()
     test_acc = evaluate_realworld(model, test_X, test_Y, device)
-    print("After warm up, test acc: {:.2f}".format(test_acc))
+    # print("After warm up, test acc: {:.2f}".format(test_acc))
     return model, partial_weight
 
 def train_realworld(config):
@@ -65,11 +66,12 @@ def train_realworld(config):
     data_reader = RealwordDataLoader(root + dataset + '.mat')
     full_dataset = RealWorldData(data_reader)
     full_data_size = len(full_dataset)
-    test_size, valid_size = int(full_data_size * 0.2), int(full_data_size * 0.2)
+    test_size, valid_size = int(full_data_size * 0.1), int(full_data_size * 0.1)
+    # test_size, valid_size = int(full_data_size * 0.2), int(full_data_size * 0.2)
     train_size = full_data_size - test_size - valid_size
     train_dataset, valid_dataset, test_dataset = \
         torch.utils.data.random_split(full_dataset, [train_size, valid_size, test_size],
-                                      torch.Generator().manual_seed(42))
+                                      torch.Generator().manual_seed(config.split_seed))
     train_idx, valid_idx, test_idx = train_dataset.indices, valid_dataset.indices, test_dataset.indices
     train_dataset, valid_dataset, test_dataset = \
         My_Subset(full_dataset, train_idx), My_Subset(full_dataset, valid_idx), My_Subset(full_dataset, test_idx)
@@ -183,11 +185,12 @@ def train_realworld2(config):
     data_reader = RealwordDataLoader(root + dataset + '.mat')
     full_dataset = RealWorldData(data_reader)
     full_data_size = len(full_dataset)
-    test_size, valid_size = int(full_data_size * 0.2), int(full_data_size * 0.2)
+    test_size, valid_size = int(full_data_size * 0.1), int(full_data_size * 0.1)
+    # test_size, valid_size = int(full_data_size * 0.2), int(full_data_size * 0.2)
     train_size = full_data_size - test_size - valid_size
     train_dataset, valid_dataset, test_dataset = \
         torch.utils.data.random_split(full_dataset, [train_size, valid_size, test_size],
-                                      torch.Generator().manual_seed(42))
+                                      torch.Generator().manual_seed(config.split_seed))
     train_idx, valid_idx, test_idx = train_dataset.indices, valid_dataset.indices, test_dataset.indices
     train_dataset, valid_dataset, test_dataset = \
         My_Subset(full_dataset, train_idx), My_Subset(full_dataset, valid_idx), My_Subset(full_dataset, test_idx)
@@ -292,13 +295,36 @@ def train_realworld2(config):
     return best_test
 
 
-
+def run():
+    args.dt = "realworld"
+    args.bs = 100
+    args.mo = "linear"
+    args.split_seed= 42
+    args.seed = 42
+    if args.ds == "lost":
+        best_params = {'lr': 0.001, 'wd': 0.01, 'warm_up': 30, 'beta': 1, 'gamma': 0.2, 'correct': 0.4, 'split_seed': 31, 'seed': 36}
+    if args.ds == "birdac":
+        best_params = {'beta': 0.0001, 'correct': 0.6, 'gamma': 0.2, 'lr': 0.1, 'seed': 36, 'split_seed': 34, 'warm_up': 10, 'wd': 1e-05}
+    if args.ds == "MSRCv2":
+        best_params = {'beta': 10, 'correct': 0.5, 'gamma': 20, 'lr': 0.001, 'warm_up': 20, 'wd': 0.01, 'split_seed': 6, 'seed': 25}
+    if args.ds == "Mirflickr":
+        best_params = {'lr': 0.001, 'wd': 0.0001, 'warm_up': 10, 'beta': 0.01, 'gamma': 20, 'correct': 0.2, 'split_seed': 18, 'seed': 12}
+    if args.ds == "Malagasy":
+        best_params = {'beta': 0.001, 'correct': 0.2, 'gamma': 0.02, 'lr': 0.01, 'warm_up': 40, 'wd': 0.0001}
+    if args.ds == "spd":
+        best_params = {'beta': 0.001, 'correct': 0.2, 'gamma': 0.02, 'lr': 0.1, 'warm_up': 10, 'wd': 0.0001}
+    if args.ds == "LYN":
+        best_params = {'beta': 0.01, 'correct': 0.2, 'gamma': 20, 'lr': 0.1, 'warm_up': 10, 'wd': 0.0001}
+    for key, value in best_params.items():
+        setattr(args, key, value)
+    set_seed(args.seed)
+    if args.dt == "realworld":
+        if args.ds not in ['spd', 'LYN']:
+            best_test = train_realworld(args)
+        else:
+            best_test = train_realworld2(args)
 
 
 # enter
 if __name__ == "__main__":
-    if args.dt == "realworld":
-        if args.ds not in ['spd', 'LYN']:
-            train_realworld(args)
-        else:
-            train_realworld2(args)
+    run()
